@@ -78,7 +78,7 @@ def showTorrent(torrentResult):
             return torrent
     return None
 
-def main_cli():                
+def cli():                
     print('PyTorrSearch CLI')
     parser = argparse.ArgumentParser(description="PyTorrSearch CLI usage")
     parser.add_argument("-t","--title", help="Search movie by Title")
@@ -146,4 +146,4 @@ def main_cli():
     print(dl.add_torrent_magnet(choice.url) + " to " + rpc_host)
 
 if __name__ == '__main__':
-    main_cli()
+    cli()
