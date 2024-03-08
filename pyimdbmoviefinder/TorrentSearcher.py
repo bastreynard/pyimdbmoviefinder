@@ -1,9 +1,9 @@
 # This Python file uses the following encoding: utf-8
 from typing import List
 
-from pymoviefinder.YtsFetcher import YtsFetcher
-from pymoviefinder.JackettFetcher import JackettFetcher
-from pymoviefinder.TorrentFetcher import TorrentResult
+from pyimdbmoviefinder.YtsFetcher import YtsFetcher
+from pyimdbmoviefinder.JackettFetcher import JackettFetcher
+from pyimdbmoviefinder.TorrentFetcher import TorrentResult
 from dataclasses import dataclass
 
 @dataclass

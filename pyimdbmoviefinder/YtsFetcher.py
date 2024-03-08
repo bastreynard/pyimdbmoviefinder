@@ -2,7 +2,7 @@ from typing import List
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from pymoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
+from pyimdbmoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
 
 class YtsFetcher(TorrentFetcher):
     def __init__(self, id):

@@ -2,7 +2,7 @@ import operator
 from typing import List
 
 from requests import HTTPError
-from pymoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
+from pyimdbmoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
 import humanize
 
 import logging
@@ -10,7 +10,7 @@ import re
 
 import xml.etree.ElementTree as ET
 
-from pymoviefinder.http_utils import build_url, fetch_url
+from pyimdbmoviefinder.http_utils import build_url, fetch_url
 
 logger = logging.getLogger('torrentSearch')
 DEFAULT_HOST = "http://localhost:9117"
