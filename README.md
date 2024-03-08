@@ -9,7 +9,7 @@ The torrent found can be sent to a torrent downloader such as a [transmission](h
 
 #### CLI
 
-`cli/clisearch.py [OPTIONS]`
+`pyimdbmoviefinder [OPTIONS]`
 
 ```bash
 PyTorrSearch CLI
