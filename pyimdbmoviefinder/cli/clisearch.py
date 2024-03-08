@@ -5,9 +5,9 @@ import sys
 from getpass import getpass
 import threading
 import time
-from pymoviefinder import ImdbSearcher
-from pymoviefinder import TorrentSearcher
-from pymoviefinder import TorrentDownloader
+from pyimdbmoviefinder import ImdbSearcher
+from pyimdbmoviefinder import TorrentSearcher
+from pyimdbmoviefinder import TorrentDownloader
 
 DEFAULT_MAX_RESULT = 8
 

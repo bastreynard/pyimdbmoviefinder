@@ -3,8 +3,8 @@ requires = ["setuptools==68.2.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pymoviefinder_Vulpiculus"
-version = "0.0.3"
+name = "pyimdbmoviefinder"
+version = "0.0.1"
 authors = [
   { name="Vulpiculus", email="bastien@rnrd.ch" },
 ]
@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/bastreynard/PyMovieFinder"
-Issues = "https://github.com/bastreynard/PyMovieFinder/issues"
+Homepage = "https://github.com/bastreynard/pyimdbmoviefinder"
+Issues = "https://github.com/bastreynard/pyimdbmoviefinder/issues"
