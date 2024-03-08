@@ -1,6 +1,6 @@
 requests
+imdbpy
+httplib2
 cinemagoer==2023.5.1
 humanize
 configparser
-build
-twine
