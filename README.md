@@ -3,9 +3,11 @@
 Package for searching torrents that match an IMDb search.
 The torrent found can be sent to a torrent downloader such as a [transmission](https://github.com/transmission/transmission) daemon running on a remote server using RPC protocol.
 
+Some exemple apps are available [here](https://github.com/bastreynard/pymf-apps).
+
 ### Prerequisite 
 
-- Python3
+- `pip install pyimdbmoviefinder`
 
 #### CLI
 
