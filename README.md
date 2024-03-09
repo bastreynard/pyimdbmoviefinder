@@ -14,10 +14,10 @@ Some exemple apps are available [here](https://github.com/bastreynard/pymf-apps)
 `pyimdbmoviefinder [OPTIONS]`
 
 ```bash
-PyTorrSearch CLI
-usage: clisearch.py [-h] [-t TITLE] [-i ID] [-a] [-n NUM]
+pyimdbmoviefinder CLI
+usage: pyimdbmoviefinder [-h] [-t TITLE] [-i ID] [-a] [-n NUM]
 
-PyTorrSearch CLI usage
+pyimdbmoviefinder CLI usage
 
 options:
   -h, --help              show this help message and exit
