@@ -5,9 +5,9 @@ import sys
 from getpass import getpass
 import threading
 import time
-from pyimdbmoviefinder import ImdbSearcher
-from pyimdbmoviefinder import TorrentSearcher
-from pyimdbmoviefinder import TorrentDownloader
+from pyimdbmoviefinder.ImdbSearcher import ImdbSearcher
+from pyimdbmoviefinder.TorrentSearcher import TorrentSearcher
+from pyimdbmoviefinder.TorrentDownloader import TorrentDownloader
 
 DEFAULT_MAX_RESULT = 8
 
@@ -98,10 +98,12 @@ def cli():
     config = configparser.ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.parent.parent) + "/config/config.ini"
     config.read(config_path)
-    if config.has_section("Jackett"):
+    try:
         jackett***REMOVED***config.get("Jackett", "Host")
         jackett***REMOVED*** config.get("Jackett", "ApiKey")
-        
+    except:
+        jackett***REMOVED***jackett***REMOVED*** None
+
     # 1. Search IMDb
     with Spinner():
         if args["title"]:
@@ -137,6 +139,7 @@ def cli():
             config.get('RPC','Host'), config.get('RPC','User'), config.get('RPC','Password')
     else:
         print("No config.ini found, enter RPC config manually:")
+        print("Or download the magnet directly: %s", choice.url)
         rpc_host = input('RPC Address: ')
         rpc_user = input('Username: ')
         rpc_password = getpass()
