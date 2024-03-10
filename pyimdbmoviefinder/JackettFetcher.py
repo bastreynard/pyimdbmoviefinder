@@ -23,7 +23,6 @@ class JackettFetcher(TorrentFetcher):
             
         logger.info(f'Host {host}, API key {apiKey}')
         self.api = Jackett(apiKey, host, path, limit, ssl)
-        logger.setLevel(logging.INFO)
         
     def fetch(self) -> tuple[bool, List[TorrentResult]]:
         res, output = self.api.search(self.title)
