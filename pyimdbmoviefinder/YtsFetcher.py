@@ -23,7 +23,7 @@ class YtsFetcher(TorrentFetcher):
         """
         self.url = "https://yts.mx/api/v2/list_movies.json?query_term="
         self.movieId = "tt"+imdbId
-
+        
     def requests_retry_session(
         self,
         retries=3,
