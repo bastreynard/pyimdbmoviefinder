@@ -1,7 +1,5 @@
-import operator
 from typing import List
 
-from requests import HTTPError
 from pyimdbmoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
 import humanize
 
@@ -12,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 from pyimdbmoviefinder.http_utils import build_url, fetch_url
 
-logger = logging.getLogger('torrentSearch')
+logger = logging.getLogger('pyimdbmoviefinder')
 DEFAULT_HOST = "http://localhost:9117"
 
 class JackettFetcher(TorrentFetcher):
@@ -23,27 +21,30 @@ class JackettFetcher(TorrentFetcher):
         if not host:
             host = DEFAULT_HOST
             
-        print(f'Host {host}, API key {apiKey}')
+        logger.info(f'Host {host}, API key {apiKey}')
         self.api = Jackett(apiKey, host, path, limit, ssl)
-    
-    def fetch(self) -> List[TorrentResult]:
-        torrents = self.api.search(self.title)
-        if not torrents:
+        logger.setLevel(logging.INFO)
+        
+    def fetch(self) -> tuple[bool, List[TorrentResult]]:
+        res, output = self.api.search(self.title)
+        if res and not output:
             # Give up
-            return None
+            return None, output
+        elif not res:
+            return res, output
         torrents_final = []
-        for torrent in torrents:
+        for torrent in output:
             if 'chinese' in torrent.title.lower():
                 # Lots of chinese ensubbed movies on rarbg...
                 continue
             if torrent.seeds is not None and torrent.seeds == 0:
-                print("No seeders, skipping...")
+                logger.debug("No seeders, skipping...")
                 continue
-            print("Found torrent with seeders:", torrent.title)
+            logger.debug("Found torrent with seeders: %s", torrent.title)
             torrents_final.append(torrent)
         # Sort by seeders
         sorted_torrents = sorted(torrents_final, key= lambda e:e.seeds, reverse=True)
-        return sorted_torrents
+        return True, sorted_torrents
 
 class Jackett(object):
     """docstring for Jackett"""
@@ -84,9 +85,11 @@ class Jackett(object):
 
         url = build_url(self.ssl, self.host, path, url_args)
         url = url.replace('+', '%20')
-        res = fetch_url(url)
-
-        return self.parse_xml_for_torrents(res.read())
+        res, output = fetch_url(url)
+        if res:
+            return True, self.parse_xml_for_torrents(output.read())
+        else:
+            return False, output
 
 
     def find_xml_attribute(self, xml_element, attr):

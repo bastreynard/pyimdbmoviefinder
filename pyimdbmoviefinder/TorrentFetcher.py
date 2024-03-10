@@ -36,6 +36,6 @@ class TorrentFetcher:
         pass
 
     @abstractmethod
-    def fetch(self) -> List[TorrentResult]:
+    def fetch(self) -> tuple[bool, List[TorrentResult]]:
         pass
 

@@ -1,8 +1,10 @@
 # This Python file uses the following encoding: utf-8
 from typing import List
+import logging
 from imdb import Cinemagoer
 from dataclasses import dataclass
 
+logger = logging.getLogger('pyimdbmoviefinder')
 @dataclass
 class MovieData():
     '''Dataclass used to store all data related to a movie'''
@@ -28,16 +30,16 @@ class ImdbSearcher():
         self.moviesList: List[MovieData] = []
 
     def searchByTitle(self, title, max_result = 10, no_series = False):
-        print("Search movie by title: {}".format(title))
-        print("Include TV : %d" % (not no_series))
+        logger.info("Search movie by title: {}".format(title))
+        logger.debug("Include TV : %d" % (not no_series))
         try:
             # TODO: search_movie_advanced() does not work anymore ?
             movieResult = self.imdbApi.search_movie(title, results=max_result)
         except Exception:
-            print("No results")
+            logger.warn("No results")
             return None
         if movieResult is None:
-            print("No results")
+            logger.warn("No results")
             return None
         else:
             for i in range(len(movieResult)):
@@ -45,7 +47,7 @@ class ImdbSearcher():
                 if 'full-size cover url' in movieResult[i].keys():
                     cover_url = movieResult[i]['full-size cover url']
                 if no_series and ('kind' in movieResult[i].keys()) and movieResult[i]['kind'].lower() != "movie":
-                    print("skipped %s serie" % movieResult[i]['title'])
+                    logger.info("Skipped Serie %s" % movieResult[i]['title'])
                     # Skip series
                     continue
                 id = movieResult[i].getID()
@@ -56,7 +58,7 @@ class ImdbSearcher():
         return self.moviesList
         
     def searchById(self, id):
-        print("Search movie by ID: {}".format(id))
+        logger.info("Search movie by ID: {}".format(id))
         movieResult = self.imdbApi.get_movie(id)
         mov = self.getMovieFromId(id)
         vids = self.findMovieInfo(movieResult, 'videos')
@@ -117,5 +119,5 @@ class ImdbSearcher():
         return None
     
     def clear(self):
-        print("Clear IMDb search results !")
+        logger.debug("Clear IMDb search results !")
         self.moviesList = []

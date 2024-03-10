@@ -1,6 +1,9 @@
 # This Python file uses the following encoding: utf-8
 import httplib2
+import logging
 from json import dumps
+
+logger = logging.getLogger('pyimdbmoviefinder')
 
 class TorrentDownloader:
     '''
@@ -12,20 +15,20 @@ class TorrentDownloader:
         self.pw = pw
         self.dir = dir
 
-    def add_torrent_magnet(self, magnet_link:str) -> str:
+    def add_torrent_magnet(self, magnet_link:str) -> tuple[bool, str]:
         '''
         Forward the magnet link to transmission daemon through RPC
         magnet_link : the magnet link of the torrent to be sent
-        return: String describing success / failure
+        return: Boolean result and String describing success / failure
         '''
         h = httplib2.Http(".cache")
         h.add_credentials(self.user, self.pw)
         try:
             resp, content = h.request(self.host, "GET")
         except Exception as e:
-            return "Unable to send the request, verify your config : \r\n {}".format(str(e))
+            return False, "Unable to send the request, verify your config : {}".format(str(e))
         if not 'x-transmission-session-id' in resp.keys():
-            return "Response missing x-transmission-session-id, check your hostname/user/password or webserver configuration !"
+            return False, "Response missing x-transmission-session-id, check your hostname/user/password or webserver configuration !"
         headers = { "X-Transmission-Session-Id": resp['x-transmission-session-id'] }
         args = { "filename": magnet_link }
         if self.dir:
@@ -35,8 +38,8 @@ class TorrentDownloader:
         _, content = h.request(self.host, 'POST', headers=headers, body=body)
 
         if str(content).find("success") == -1:
-            print("ERROR: Magnet Link: " + magnet_link)
-            print("ERROR: Answer: " + str(content))
-            return "An error occured while sending torrent to {}. Server answered \r\n\"{}\"\
+            logger.error("ERROR: Magnet Link: " + magnet_link)
+            logger.error("ERROR: Answer: " + str(content))
+            return False, "An error occured while sending torrent to {}. Server answered \r\n\"{}\"\
                 \r\nMake sure the link is correct".format(self.host, str(content))
-        return "Successfully added {}".format(magnet_link)
+        return True, "Successfully added {} to {}".format(magnet_link, self.host)
