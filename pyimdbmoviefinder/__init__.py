@@ -2,17 +2,17 @@
 
 """pyimdbmoviefinder CLI tool."""
 
+import logging
 from sys import path
 from os.path import dirname
-path.append(dirname(__file__))
-
-import logging
 from colorama import init as cinit
 from pyimdbmoviefinder.utils import LoggingColorFilter
+path.append(dirname(__file__))
 
 cinit()
 ch = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s %(levelname)8s %(filename)s | %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s %(levelname)8s %(filename)s | %(message)s')
 ch.setFormatter(formatter)
 
 logger = logging.getLogger('pyimdbmoviefinder')

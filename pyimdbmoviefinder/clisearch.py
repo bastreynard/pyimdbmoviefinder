@@ -1,3 +1,6 @@
+'''
+Command Line Interface for searching for torrents
+'''
 import argparse
 import configparser
 import pathlib
@@ -11,78 +14,113 @@ from pyimdbmoviefinder.utils import Spinner
 
 DEFAULT_MAX_RESULT = 8
 logger = logging.getLogger('pyimdbmoviefinder')
-        
-def showImdb(imdbResult):
+
+
+def show_imdb(imdbResult):
+    """Show result from IMDb search
+
+    Args:
+        imdbResult (List): List of IMDb results
+
+    Returns:
+        int: User choice
+    """
     for i, movie in enumerate(imdbResult):
-        s_link = "https://www.imdb.com/title/tt " + movie.id
+        s_link = "https://www.imdb.com/title/tt " + movie.imdbId
         logger.info(str(i) + ": " + movie.title + s_link)
     # Ask user choice
-    try:
-        num = int(input("Enter choice: "))
-    except ValueError:
-        logger.error("Invalid user input")
-        sys.exit(0)
-    if 0 > num >= len(imdbResult):
-        logger.error("Invalid user input")
-        sys.exit(0)
+    invalid = True
+    while invalid:
+        try:
+            num = int(input("Enter choice: "))
+        except ValueError:
+            invalid=True
+            logger.error("Invalid user input")
+        if num >=len(imdbResult) or num < 0:
+            invalid=True
+            logger.error("Invalid user input !")
+        else:
+            invalid=False
+
     for i, movie in enumerate(imdbResult):
         if i == num:
             return movie
     return None
 
-def showTorrent(torrentResult):
+
+def show_torrent(torrentResult):
+    """Show result from torrent search
+
+    Args:
+        imdbResult (List): List of torrent results
+
+    Returns:
+        int: User choice
+    """
     for i, torrent in enumerate(torrentResult.torrents):
         s = str(i) + ": "
-        s += torrent.title
+        s += torrent.name
         s += f" ({torrent.quality})"
         s += f" ({torrent.provider})"
         s += f' seeders :{torrent.seeds}'
         logger.info(s)
     # Ask user choice
-    try:
-        num = int(input("Enter choice: "))
-    except ValueError:
-        logger.error("Invalid user input")
-        sys.exit(0)
-    assert num >= 0 and num < len(torrentResult.torrents), "Invalid input"
+    invalid = True
+    while invalid:
+        try:
+            num = int(input("Enter choice: "))
+        except ValueError:
+            invalid=True
+            logger.error("Invalid user input")
+        if num >=len(torrentResult.torrents) or num < 0:
+            invalid=True
+            logger.error("Invalid user input !")
+        else:
+            invalid=False
+
     for i, torrent in enumerate(torrentResult.torrents):
         if i == num:
             return torrent
     return None
 
-def cli():              
+
+def cli():
+    """
+    CLI entry
+    """
+    #pylint: disable=too-many-branches, too-many-statements
     logger.info('PyMovieFinder CLI\n')
     parser = argparse.ArgumentParser(description="PyTorrSearch CLI usage")
-    parser.add_argument("-t","--title", help="Search movie by Title")
-    parser.add_argument("-i","--id", help="Search movie by ID")
-    parser.add_argument("-a","--all", help="Search torrents on YTS and using Jackett, otherwise only YTS is used", action="store_true")
-    parser.add_argument("-n","--num", help="Maximum number of search results")
-    parser.add_argument("--tv", help="Include TV shows in search")
-    if len(sys.argv)==0:
+    parser.add_argument("-t", "--title", help="Search movie by Title")
+    parser.add_argument("-i", "--id", help="Search movie by ID")
+    parser.add_argument(
+        "-a", "--all", help="Search torrents on YTS and using Jackett, otherwise only YTS is used",
+        action="store_true")
+    parser.add_argument("-n", "--num", help="Maximum number of search results")
+    parser.add_argument("--tv", help="Include TV shows in search", action="store_true")
+    if len(sys.argv) == 0:
         parser.print_help()
         parser.exit()
     args = vars(parser.parse_args())
-    
-    max_result = args["num"] if args["num"] else DEFAULT_MAX_RESULT
-    search_all = args["all"]
-    include_tv = args["tv"]
-    
-    # User Configuration 
+
+    maxResult = args["num"] if args["num"] else DEFAULT_MAX_RESULT
+    searchAll = args["all"]
+    includeTv = not args["tv"]
+
+    # User Configuration
     config = configparser.ConfigParser()
     config_path = str(pathlib.Path(__file__).parent) + "/config.ini"
     config.read(config_path)
-    try:
-        jackett***REMOVED***config.get("Jackett", "Host")
-        jackett***REMOVED*** config.get("Jackett", "ApiKey")
-    except:
-        jackett***REMOVED***jackett***REMOVED*** None
+    jackett***REMOVED***config.get("Jackett", "Host")
+    jackett***REMOVED*** config.get("Jackett", "ApiKey")
 
     # 1. Search IMDb
     with Spinner():
         if args["title"]:
-            imdbResult = ImdbSearcher().searchByTitle(args['title'], max_result, no_series = not include_tv)
+            imdbResult = ImdbSearcher().search_by_title(
+                args['title'], maxResult, includeTv=includeTv)
         elif args["id"]:
-            imdbResult = ImdbSearcher().searchById(args['id'])
+            imdbResult = ImdbSearcher().search_by_title(args['id'])
         else:
             parser.print_help()
             parser.exit()
@@ -91,13 +129,15 @@ def cli():
         logger.warning("No IMDb results")
         sys.exit(0)
     else:
-        choice = showImdb(imdbResult)
+        choice = show_imdb(imdbResult)
 
     torrent_errors = []
     # Search torrents
     with Spinner():
         searcher = TorrentSearcher()
-        res, error = searcher.setSearch(choice.id, choice.title, yts=True, jackett=search_all,  jackettApiKey=jackettApiKey, jackettHost=jackettHost)
+        res, error = searcher.set_search(choice.imdbId, choice.title, yts=True,
+                                        jackett=searchAll,  jackettApiKey=jackettApiKey,
+                                        jackettHost=jackettHost)
         if not res:
             torrent_errors.append(error)
         torrentResult, errors = searcher.run()
@@ -111,16 +151,17 @@ def cli():
         logger.warning("No Torrents found")
         sys.exit(0)
     else:
-        choice = showTorrent(torrentResult)
+        choice = show_torrent(torrentResult)
 
     # RPC server configuration
     if config.has_section("RPC"):
         logger.info("Using config.ini for RPC configuration")
         rpc_host, rpc_user, rpc_password = \
-            config.get('RPC','Host'), config.get('RPC','User'), config.get('RPC','Password')
+            config.get('RPC', 'Host'), config.get(
+                'RPC', 'User'), config.get('RPC', 'Password')
     else:
         logger.warning("No config.ini found, enter RPC config manually:")
-        logger.info(f"Or download the magnet directly: {choice.url}")
+        logger.info("Or download the magnet directly: %s", choice.url)
         rpc_host = input('RPC Address: ')
         rpc_user = input('Username: ')
         rpc_password = getpass()
@@ -132,6 +173,7 @@ def cli():
         logger.info(info)
     else:
         logger.error(info)
+
 
 if __name__ == '__main__':
     cli()
