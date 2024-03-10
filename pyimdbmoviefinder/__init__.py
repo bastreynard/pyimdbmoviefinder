@@ -8,7 +8,8 @@ path.append(dirname(__file__))
 
 import logging
 from colorama import init as cinit
-from utils import LoggingColorFilter
+from pyimdbmoviefinder.utils import LoggingColorFilter
+
 cinit()
 ch = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(levelname)8s %(filename)s | %(message)s')
