@@ -10,7 +10,6 @@ class YtsFetcher(TorrentFetcher):
     def __init__(self, id):
         self.url = "https://yts.mx/api/v2/list_movies.json?query_term="
         self.movie_id = "tt"+id
-        logger.setLevel(logging.INFO)
         
     def requests_retry_session(
             self,
