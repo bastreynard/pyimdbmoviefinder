@@ -111,8 +111,11 @@ def cli():
     config = configparser.ConfigParser()
     config_path = str(pathlib.Path(__file__).parent) + "/config.ini"
     config.read(config_path)
-    jackett***REMOVED***config.get("Jackett", "Host")
-    jackett***REMOVED*** config.get("Jackett", "ApiKey")
+    try:
+        jackettHost = config.get("Jackett", "Host")
+        jackettApiKey = config.get("Jackett", "ApiKey")
+    except configparser.Error:
+        jackettHost = jackettApiKey = None
 
     # 1. Search IMDb
     with Spinner():
