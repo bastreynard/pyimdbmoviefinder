@@ -17,5 +17,5 @@ ch.setFormatter(formatter)
 
 logger = logging.getLogger('pyimdbmoviefinder')
 logger.addHandler(ch)
-logger.setLevel(logging.DEBUG)  # Change this for more logging
+logger.setLevel(logging.INFO)  # Change this for more logging
 logger.addFilter(LoggingColorFilter())
