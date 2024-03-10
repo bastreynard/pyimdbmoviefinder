@@ -105,7 +105,7 @@ def cli():
 
     maxResult = args["num"] if args["num"] else DEFAULT_MAX_RESULT
     searchAll = args["all"]
-    includeTv = not args["tv"]
+    includeTv = args["tv"]
 
     # User Configuration
     config = configparser.ConfigParser()
