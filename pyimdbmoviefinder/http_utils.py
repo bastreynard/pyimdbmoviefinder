@@ -1,12 +1,11 @@
 #!/usr/bin/env python3.10
 
 import logging
-import sys
 
 from urllib import parse, request
 from urllib.error import URLError
 
-logger = logging.getLogger('torrentSearch')
+logger = logging.getLogger('pyimdbmoviefinder')
 
 def build_url(ssl, baseUrl, path, args_dict={}):
    """
@@ -47,12 +46,12 @@ def fetch_url(url):
    req = request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
    try:
        response = request.urlopen(req, timeout=60)
-       return response
+       return True, response
    except URLError as e:
       if hasattr(e, 'reason'):
-         logger.error('We failed to reach a server with request: %s' % req.full_url)
-         logger.error('Reason: %s' % e.reason)
+         e = ('We failed to reach a server with request: %s\n' % req.full_url)
+         e += ('Reason: %s' % e.reason)
       elif hasattr(e, 'code'):
-         logger.error('The server couldn\'t fulfill the request.')
-         logger.error('Error code: ', e.code)
-      sys.exit()
+         e = ('The server couldn\'t fulfill the request.\n')
+         e += ('Error code: ', e.code)
+      return False, e

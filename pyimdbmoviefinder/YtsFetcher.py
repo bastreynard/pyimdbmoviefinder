@@ -1,14 +1,17 @@
 from typing import List
 import requests
+import logging
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from pyimdbmoviefinder.TorrentFetcher import TorrentFetcher, TorrentResult
 
+logger = logging.getLogger('pyimdbmoviefinder')
 class YtsFetcher(TorrentFetcher):
     def __init__(self, id):
         self.url = "https://yts.mx/api/v2/list_movies.json?query_term="
         self.movie_id = "tt"+id
-
+        logger.setLevel(logging.INFO)
+        
     def requests_retry_session(
             self,
             retries=3,
@@ -29,25 +32,24 @@ class YtsFetcher(TorrentFetcher):
             session.mount('https://', adapter)
             return session
 
-    def fetch(self) -> List[TorrentResult]:
+    def fetch(self) -> tuple[bool, List[TorrentResult]]:
         api_url = self.url + self.movie_id
         response = self.requests_retry_session().get(api_url, timeout=120).json()
-        #print(response)
+        logger.debug(response)
         data = response.get('data')
         movies = data.get('movies')
         if movies is None:
-            print("Torrents not found on YTS")
-            return None
+            return False, "Torrents not found on YTS"
         for movie in movies:
             title_long = movie.get('title_long')
-            print("Found torrents on YTS for :", title_long)
+            logger.info("Found torrents on YTS for : %s", title_long)
             torrents = movie.get('torrents')
             if torrents is None:
-                print("no torrent for this movie")
+                logger.info("no torrent for this movie")
                 continue
             descs = []
             for torrent in torrents:
-                #print(torrent)
+                logger.debug(torrent)
                 desc = TorrentResult(title_long, 
                                     torrent.get('quality'), 
                                     torrent.get('type'), 
@@ -56,4 +58,4 @@ class YtsFetcher(TorrentFetcher):
                                     "YTS", 
                                     torrent.get('url'))
                 descs.append(desc)
-        return descs
+        return True, descs
