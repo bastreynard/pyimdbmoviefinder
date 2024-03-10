@@ -50,7 +50,6 @@ class TorrentDownloader:
         if str(content).find("success") == -1:
             logger.error("ERROR: Magnet Link: %s", magnetLink)
             logger.error("ERROR: Answer: %s", str(content))
-            return False, ("An error occured while sending torrent to %s. \
-                Server answered \r\n\"%s\" \r\nMake sure the link is correct",
-                self.host, str(content))
-        return True, ("Successfully added %s to %s", magnetLink, self.host)
+            return False, "An error occured while sending torrent to" + self.host + \
+                "Server answered \r\n" + str(content) + " \r\nMake sure the link is correct"
+        return True, "Successfully added " + magnetLink + self.host
