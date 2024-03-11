@@ -40,7 +40,10 @@ class TorrentResult():
             str: The release type found
         """
         name = self.name.casefold()
-        return [r_type for r_type in RELEASE_TYPES if r_type in name]
+        release_type = [r_type for r_type in RELEASE_TYPES if r_type in name]
+        if len(release_type) == 0:
+            return self.quality
+        return release_type
 
 class TorrentFetcher:
     """Abstract Class for Torrent Fetcher classes
