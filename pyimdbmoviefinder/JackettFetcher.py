@@ -44,9 +44,6 @@ class JackettFetcher(TorrentFetcher):
         torrents_final = []
         for torrent in output:
             #pylint: disable=no-member
-            if 'chinese' in torrent.name.lower():
-                # Lots of chinese ensubbed movies on rarbg...
-                continue
             if torrent.seeds is not None and torrent.seeds == 0:
                 logger.debug("No seeders, skipping...")
                 continue
