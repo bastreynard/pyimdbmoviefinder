@@ -19,7 +19,7 @@ class JackettFetcher(TorrentFetcher):
     """docstring for JackettFetcher"""
 
     def __init__(self, imdbId, title, apiKey, host=DEFAULT_HOST, path="torznab/all", \
-        limit=25, ssl=False): #pylint: disable=too-many-arguments
+        limit=25): #pylint: disable=too-many-arguments
         '''Constructor'''
         self.movieId = "tt"+imdbId
         self.title = title
@@ -27,6 +27,7 @@ class JackettFetcher(TorrentFetcher):
             host = DEFAULT_HOST
 
         logger.info('Host %s, API key %s', host, apiKey)
+        ssl = host.startswith('https')
         self.api = Jackett(apiKey, host, path, limit, ssl)
 
     def fetch(self) -> tuple[bool, List[TorrentResult]]:
